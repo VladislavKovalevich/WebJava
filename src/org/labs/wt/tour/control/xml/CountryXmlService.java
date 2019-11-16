@@ -4,41 +4,72 @@ package org.labs.wt.tour.control.xml;
 
 import org.labs.wt.tour.control.CountryService;
 import org.labs.wt.tour.model.Country;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.List;
 
 
-public class CountryXmlService implements CountryService {
-
-    private final String file;
+public class CountryXmlService extends XmlService<Country> implements CountryService {
 
     public CountryXmlService(final String file) {
-        this.file = file;
+        super("countries", file);
     }
 
     @Override
     public List<Country> getCountries() {
-        return null;
+        return getAllObjects();
     }
 
     @Override
     public Country getCountryById(long id) {
-        return null;
+        return getObjectByID(id);
     }
 
     @Override
     public boolean addCountry(Country country) {
-        return false;
+        return addObject(country);
     }
 
     @Override
     public boolean updateCountry(Country country) {
-        return false;
+        return updateObject(country);
     }
 
     @Override
     public boolean deleteCountry(long id) {
-        return false;
+        return deleteObjectByID(id);
+    }
+
+    @Override
+    protected String getElementName() {
+        return "country";
+    }
+
+    @Override
+    protected Country convertToObject(Node node) {
+        if ((node == null) || (node.getNodeType() != Node.ELEMENT_NODE)) {
+            return null;
+        }
+
+        Element element = (Element)node;
+        Country country = new Country();
+        country.setId(Long.parseLong(element.getAttribute("id")));
+        country.setCountryName(element.getAttribute("name"));
+
+        return country;
+    }
+
+    @Override
+    protected Node convertToNode(Country object, Element element) {
+        if ((object == null) || (element == null)) {
+            return element;
+        }
+
+        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("name", object.getCountryName());
+
+        return element;
     }
 
 }

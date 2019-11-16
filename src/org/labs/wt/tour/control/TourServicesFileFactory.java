@@ -23,13 +23,13 @@ public class TourServicesFileFactory implements TourServicesFactory {
     }
 
     private TourServicesFileFactory(final String dir) {
-        this.dir = dir;
+        this.dir = "data" + File.separator + dir;
     }
 
     @Override
     public CountryService getCountryService() {
         if (countryService == null) {
-            countryService = new CountryFileService(dir + File.pathSeparator + "country.txt");
+            countryService = new CountryFileService(dir + File.separator + "country.txt");
         }
 
         return countryService;
@@ -38,7 +38,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public RegionService getRegionService() {
         if (regionService == null) {
-            regionService = new RegionFileService(dir + File.pathSeparator + "region.txt");
+            regionService = new RegionFileService(dir + File.separator + "region.txt");
         }
 
         return regionService;

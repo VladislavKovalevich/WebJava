@@ -23,13 +23,13 @@ public class TourServicesXmlFactory implements TourServicesFactory {
     }
 
     private TourServicesXmlFactory(final String dir) {
-        this.dir = dir;
+        this.dir = "data" + File.separator + dir;
     }
 
     @Override
     public CountryService getCountryService() {
         if (countryService == null) {
-            countryService = new CountryXmlService(dir + File.pathSeparator + "country.xml");
+            countryService = new CountryXmlService(dir + File.separator + "country.xml");
         }
 
         return countryService;
@@ -38,7 +38,7 @@ public class TourServicesXmlFactory implements TourServicesFactory {
     @Override
     public RegionService getRegionService() {
         if (regionService == null) {
-            regionService = new RegionXmlService(dir + File.pathSeparator + "region.xml");
+            regionService = new RegionXmlService(dir + File.separator + "region.xml");
         }
 
         return regionService;
