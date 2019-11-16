@@ -5,11 +5,10 @@ package org.labs.wt.tour.control.file;
 import org.labs.wt.tour.control.CountryService;
 import org.labs.wt.tour.model.Country;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class CountryFileService extends FileService implements CountryService {
+public class CountryFileService extends FileService<Country> implements CountryService {
 
     public CountryFileService(final String file) {
         super(file);
@@ -17,75 +16,51 @@ public class CountryFileService extends FileService implements CountryService {
 
     @Override
     public List<Country> getCountries() {
-        List<Country> list = new ArrayList<>();
-
-        checkFile(new LineListener() {
-            @Override
-            public boolean checkLine(String line) {
-                if ((line != null) && (line.trim().length() > 0)) {
-                    String[] parts = line.split("\\|");
-
-                    Country country = new Country();
-                    country.setId(Long.parseLong(parts[0]));
-                    country.setCountryName(parts[1]);
-
-                    list.add(country);
-                }
-
-
-
-                return true;
-            }
-        });
-
-        return list;
+        return getAllObjects();
     }
 
     @Override
     public Country getCountryById(long id) {
-        final Country country = new Country();
-
-        checkFile(new LineListener() {
-            @Override
-            public boolean checkLine(String line) {
-                if ((line != null) && (line.trim().length() > 0)) {
-                    String[] parts = line.split("\\|");
-
-                    long key = Long.parseLong(parts[0]);
-                    if (key == id) {
-                        country.setId(Long.parseLong(parts[0]));
-                        country.setCountryName(parts[1]);
-
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        });
-
-        return country;
+        return getObjectByID(id);
     }
 
     @Override
     public boolean addCountry(Country country) {
-        StringBuffer buffer = new StringBuffer().
-                append(country.getId()).append("|").
-                append(country.getCountryName());
-
-        appendRecord(buffer.toString());
-
-        return true;
+        return addObject(country);
     }
 
     @Override
     public boolean updateCountry(Country country) {
-        return false;
+        return updateObject(country);
     }
 
     @Override
     public boolean deleteCountry(long id) {
-        return false;
+        return deleteObjectByID(id);
+    }
+
+    @Override
+    protected String convertToString(Country country) {
+        StringBuffer buffer = new StringBuffer().
+                append(country.getId()).append("|").
+                append(country.getCountryName());
+
+        return buffer.toString();
+    }
+
+    @Override
+    protected Country convertToObject(String line) {
+        if ((line != null) && (line.trim().length() > 0)) {
+            String[] parts = line.split("\\|");
+
+            Country country = new Country();
+            country.setId(Long.parseLong(parts[0]));
+            country.setCountryName(parts[1]);
+
+            return country;
+        }
+
+        return null;
     }
 
 }
