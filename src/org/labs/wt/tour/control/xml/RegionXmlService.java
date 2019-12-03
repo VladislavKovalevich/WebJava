@@ -2,6 +2,7 @@
 package org.labs.wt.tour.control.xml;
 
 
+import org.labs.wt.tour.control.FilterListener;
 import org.labs.wt.tour.control.RegionService;
 import org.labs.wt.tour.model.Country;
 import org.labs.wt.tour.model.Region;
@@ -45,6 +46,28 @@ public class RegionXmlService extends XmlService<Region> implements RegionServic
     @Override
     protected String getElementName() {
         return "region";
+    }
+
+    @Override
+    public List<Region> filterRegions(Region filter) {
+        return filterObjects(
+                (FilterListener<Region>) region -> {
+                    boolean res1 = false;
+                    if ((region.getRegionName() != null) &&
+                            (filter.getRegionName() != null) &&
+                            (region.getRegionName().contains(filter.getRegionName()))) {
+                        res1 = true;
+                    }
+
+                    boolean res2 = false;
+                    if ((region.getCountry() != null) &&
+                            (filter.getCountry() != null) &&
+                            (region.getCountry().getId() == filter.getCountry().getId())) {
+                        res2 = true;
+                    }
+
+                    return res1 | res2;
+                });
     }
 
     @Override

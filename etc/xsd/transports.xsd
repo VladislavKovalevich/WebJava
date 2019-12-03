@@ -1,0 +1,19 @@
+<?xml version = "1.0"?>
+
+<xs:schema xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+   <xs:element name = 'transports'>
+      <xs:complexType>
+         <xs:sequence>
+             <xs:element name = 'transport' type = 'TransportType' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name = "TransportType">
+      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'tourID' type = 'xs:integer'/>
+      <xs:attribute name = 'type' type = 'xs:string'/>
+      <xs:attribute name = 'fromID' type = 'xs:integer'/>
+      <xs:attribute name = 'toID' type = 'xs:integer'/>
+   </xs:complexType>			 
+</xs:schema>

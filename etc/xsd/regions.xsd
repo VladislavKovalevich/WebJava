@@ -1,0 +1,17 @@
+<?xml version = "1.0"?>
+
+<xs:schema xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+   <xs:element name = 'regions'>
+      <xs:complexType>
+         <xs:sequence>
+             <xs:element name = 'region' type = 'RegionType' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name = "RegionType">
+      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'name' type = 'xs:string'/>
+      <xs:attribute name = 'countryID' type = 'xs:integer'/>
+   </xs:complexType>			 
+</xs:schema>

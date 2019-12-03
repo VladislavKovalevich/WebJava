@@ -2,13 +2,16 @@
 package org.labs.wt.tour.control.file;
 
 
+import org.labs.wt.tour.control.FilterListener;
 import org.labs.wt.tour.model.Identifier;
 
 import java.io.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,8 @@ abstract class FileService<T extends Identifier> {
     private final String file;
 
     private Writer writer = null;
+
+    private List<T> objects = null;
 
 
     protected abstract String convertToString(T object);
@@ -42,49 +47,78 @@ abstract class FileService<T extends Identifier> {
     }
 
     protected List<T> getAllObjects() {
-        List<T> list = new ArrayList<>();
+        if (objects != null) {
+            return objects;
+        }
+
+        objects = new ArrayList<>();
 
         checkFile(line -> {
             T object = convertToObject(line);
             if (object != null) {
-                list.add(object);
+                objects.add(object);
             }
 
             return true;
         });
 
-        return list;
+        return objects;
+    }
+
+    protected List<T> filterObjects(FilterListener filter) {
+        List<T> filtered = new ArrayList<>();
+
+        for (T obj : getAllObjects()) {
+            if (filter.filter(obj)) {
+                filtered.add(obj);
+            }
+        }
+
+        return filtered;
     }
 
     protected T getObjectByID(long id) {
-        List<T> list = new ArrayList<>();
+        List<T> list = getAllObjects();
 
-        checkFile(line -> {
-            if ((line != null) && (line.trim().length() > 0)) {
-                String[] parts = line.split("\\|");
-
-                long key = Long.parseLong(parts[0]);
-                if (key == id) {
-                    T object = convertToObject(line);
-                    if (object != null) {
-                        list.add(object);
-                    }
-
-                    return false;
-                }
+        for (T obj : list) {
+            if (obj.getId() == id) {
+                return obj;
             }
+        }
 
-            return true;
-        });
-
-        return list.size() > 0 ? list.get(0) : null;
+        return null;
     }
 
     protected boolean addObject(T object) {
-        return appendSingleRecord(convertToString(object));
+        List<T> list = getAllObjects();
+
+        for (T obj : list) {
+            if (obj.getId() == object.getId()) {
+                return false;
+            }
+        }
+
+        appendSingleRecord(convertToString(object));
+        objects.add(object);
+
+        return true;
     }
 
     protected boolean updateObject(T object) {
+        List<T> list = getAllObjects();
+
+        T objToUpdate = null;
+
+        for (T obj : list) {
+            if (obj.getId() == object.getId()) {
+                objToUpdate = obj;
+            }
+        }
+
+        if (objToUpdate == null) {
+            return false;
+        }
+
         renameAndCheckFile(line -> {
             if ((line != null) && (line.trim().length() > 0)) {
                 String[] parts = line.split("\\|");
@@ -99,10 +133,26 @@ abstract class FileService<T extends Identifier> {
             return true;
         });
 
+        objects = null;
+
         return true;
     }
 
     protected boolean deleteObjectByID(long id) {
+        List<T> list = getAllObjects();
+
+        T objToDelete = null;
+
+        for (T obj : list) {
+            if (obj.getId() == id) {
+                objToDelete = obj;
+            }
+        }
+
+        if (objToDelete == null) {
+            return false;
+        }
+
         renameAndCheckFile(line -> {
             if ((line != null) && (line.trim().length() > 0)) {
                 String[] parts = line.split("\\|");
@@ -115,9 +165,10 @@ abstract class FileService<T extends Identifier> {
             return true;
         });
 
+        objects = null;
+
         return true;
     }
-
 
     private synchronized void checkFile(LineListener listener) {
         BufferedReader bufferedReader = null;

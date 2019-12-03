@@ -2,16 +2,12 @@
 package org.labs.wt.tour.control;
 
 
-import org.labs.wt.tour.control.file.*;
-
-import java.io.File;
+import org.labs.wt.tour.control.db.*;
 
 
-public class TourServicesFileFactory implements TourServicesFactory {
+public class TourServicesDBFactory implements TourServicesFactory {
 
-    private static final TourServicesFileFactory instance = new TourServicesFileFactory("file");
-
-    private final String dir;
+    private static final TourServicesDBFactory instance = new TourServicesDBFactory();
 
     private CountryService countryService = null;
     private RegionService regionService = null;
@@ -21,18 +17,17 @@ public class TourServicesFileFactory implements TourServicesFactory {
     private TourService tourService = null;
 
 
-    static final TourServicesFileFactory getInstance() {
+    static final TourServicesDBFactory getInstance() {
         return instance;
     }
 
-    private TourServicesFileFactory(final String dir) {
-        this.dir = "data" + File.separator + dir;
+    private TourServicesDBFactory() {
     }
 
     @Override
     public CountryService getCountryService() {
         if (countryService == null) {
-            countryService = new CountryFileService(dir + File.separator + "country.txt");
+            countryService = new CountryDBService();
         }
 
         return countryService;
@@ -41,7 +36,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public RegionService getRegionService() {
         if (regionService == null) {
-            regionService = new RegionFileService(dir + File.separator + "region.txt");
+            regionService = new RegionDBService();
         }
 
         return regionService;
@@ -50,7 +45,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public ClientService getClientService() {
         if (clientService == null) {
-            clientService = new ClientFileService(dir + File.separator + "client.txt");
+            clientService = new ClientDBService();
         }
 
         return clientService;
@@ -59,7 +54,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public HotelService getHotelService() {
         if (hotelService == null) {
-            hotelService = new HotelFileService(dir + File.separator + "hotel.txt");
+            hotelService = new HotelDBService();
         }
 
         return hotelService;
@@ -68,7 +63,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public TransportService getTransportService() {
         if (transportService == null) {
-            transportService = new TransportFileService(dir + File.separator + "transport.txt");
+            transportService = new TransportDBService();
         }
 
         return transportService;
@@ -77,7 +72,7 @@ public class TourServicesFileFactory implements TourServicesFactory {
     @Override
     public TourService getTourService() {
         if (tourService == null) {
-            tourService = new TourFileService(dir + File.separator + "tour.txt");
+            tourService = new TourDBService();
         }
 
         return tourService;
