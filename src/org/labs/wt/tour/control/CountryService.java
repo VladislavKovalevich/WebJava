@@ -19,4 +19,6 @@ public interface CountryService {
 
     boolean deleteCountry(long id);
 
+    List<Country> filterCountries(Country country);
+
 }

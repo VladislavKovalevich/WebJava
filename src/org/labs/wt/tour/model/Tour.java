@@ -1,44 +1,62 @@
+
 package org.labs.wt.tour.model;
 
-import org.labs.wt.tour.model.Hotel;
 
 import java.util.Date;
 
-public class Tour {
 
+public class Tour extends Identifier {
+
+    private Client client;
     private Hotel hotel;
+
     private Date from;
-    private Integer countPerson;
-    private Integer countDays;
-    private Integer isBookt;
+    private Date to;
+
+    private Integer personCount;
+
+
+    public Tour() {
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
     public Hotel getHotel() {
         return hotel;
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
     }
 
     public Date getFrom() {
         return from;
     }
 
-    public Integer getCountPerson() {
-        return countPerson;
-    }
-
-    public Integer getCountDays() {
-        return countDays;
-    }
-
-
-    Tour(Hotel hotel, Date from, Integer countDays, Integer countPerson, Integer isBookt)
-    {
-        this.countDays = countDays;
-        this.countPerson = countPerson;
+    public void setFrom(Date from) {
         this.from = from;
-        this.hotel = hotel;
-        this.isBookt = isBookt;
     }
 
-    public Integer isBookt() {
-        return isBookt;
+    public Date getTo() {
+        return to;
     }
+
+    public void setTo(Date to) {
+        this.to = to;
+    }
+
+    public Integer getPersonCount() {
+        return personCount;
+    }
+
+    public void setPersonCount(Integer personCount) {
+        this.personCount = personCount;
+    }
+
 }

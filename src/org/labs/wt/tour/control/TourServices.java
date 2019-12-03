@@ -12,4 +12,8 @@ public class TourServices {
         return TourServicesXmlFactory.getInstance();
     }
 
+    public static TourServicesFactory getDBServices() {
+        return TourServicesDBFactory.getInstance();
+    }
+
 }

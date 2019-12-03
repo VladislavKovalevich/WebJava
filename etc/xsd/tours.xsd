@@ -1,0 +1,20 @@
+<?xml version = "1.0"?>
+
+<xs:schema xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+   <xs:element name = 'tours'>
+      <xs:complexType>
+         <xs:sequence>
+             <xs:element name = 'tour' type = 'TourType' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name = "TourType">
+      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'clientID' type = 'xs:integer'/>
+      <xs:attribute name = 'hotelID' type = 'xs:integer'/>
+      <xs:attribute name = 'fromDate' type = 'xs:string'/>
+      <xs:attribute name = 'toDate' type = 'xs:string'/>
+      <xs:attribute name = 'persons' type = 'xs:string'/>
+   </xs:complexType>			 
+</xs:schema>

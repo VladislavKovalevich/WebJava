@@ -19,4 +19,6 @@ public interface RegionService {
 
     boolean deleteRegion(long id);
 
+    List<Region> filterRegions(Region filter);
+
 }

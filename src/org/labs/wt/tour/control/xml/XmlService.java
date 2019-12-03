@@ -2,6 +2,9 @@
 package org.labs.wt.tour.control.xml;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.labs.wt.tour.control.FilterListener;
 import org.labs.wt.tour.model.Identifier;
 
 import org.w3c.dom.Document;
@@ -9,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -17,11 +21,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,6 +41,9 @@ import java.util.List;
 
 abstract class XmlService<T extends Identifier> {
 
+    private static final Logger LOGGER = LogManager.getLogger(XmlService.class);
+
+
     private final String rootTag;
     private final String file;
 
@@ -39,6 +52,9 @@ abstract class XmlService<T extends Identifier> {
 
     private XPathFactory xPathFactory = null;
     private XPath xPath = null;
+
+    private List<T> objects = null;
+
 
     protected abstract Node convertToNode(T object, Element element);
 
@@ -76,41 +92,73 @@ abstract class XmlService<T extends Identifier> {
     }
 
     protected List<T> getAllObjects() {
-        List<T> items = new ArrayList<>();
+        if (objects != null) {
+            return objects;
+        }
+
+        objects = new ArrayList<>();
 
         Document document = getDocument();
         if (document == null) {
-            return items;
+            return objects;
         }
 
-        NodeList nodes = document.getElementsByTagName(getElementName());
+        NodeList nodes = getDocument().getElementsByTagName(getElementName());
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             T obj = convertToObject(node);
 
             if (obj != null) {
-                items.add(obj);
+                objects.add(obj);
             }
         }
 
-        return items;
+        return objects;
+    }
+
+    protected List<T> filterObjects(FilterListener filter) {
+        List<T> filtered = new ArrayList<>();
+
+        for (T obj : getAllObjects()) {
+            if (filter.filter(obj)) {
+                filtered.add(obj);
+            }
+        }
+
+        return filtered;
     }
 
     protected T getObjectByID(long id) {
-        Document document = getDocument();
-        if (document == null) {
-            return null;
+        List<T> list = getAllObjects();
+
+        for (T obj : list) {
+            if (obj.getId() == id) {
+                return obj;
+            }
         }
 
-        Element element = getElementByID(document, id);
-        if (element != null) {
-            return convertToObject(element);
-        }
+        //Document document = getDocument();
+        //if (document == null) {
+        //    return null;
+        //}
+
+        //Element element = getElementByID(document, id);
+        //if (element != null) {
+        //    return convertToObject(element);
+        //}
 
         return null;
     }
 
     protected boolean addObject(T object) {
+        List<T> list = getAllObjects();
+
+        for (T obj : list) {
+            if (obj.getId() == object.getId()) {
+                return false;
+            }
+        }
+
         Document document = getDocument();
         if (document == null) {
             return false;
@@ -120,13 +168,28 @@ abstract class XmlService<T extends Identifier> {
         if (node != null) {
             node.appendChild(convertToNode(object, document.createElement(getElementName())));
 
-            return saveDocument(document);
+            saveDocument(document);
+            objects.add(object);
         }
 
-        return false;
+        return true;
     }
 
     protected boolean updateObject(T object) {
+        List<T> list = getAllObjects();
+
+        T objToUpdate = null;
+
+        for (T obj : list) {
+            if (obj.getId() == object.getId()) {
+                objToUpdate = obj;
+            }
+        }
+
+        if (objToUpdate == null) {
+            return false;
+        }
+
         Document document = getDocument();
         if (document == null) {
             return false;
@@ -136,13 +199,30 @@ abstract class XmlService<T extends Identifier> {
         if (element != null) {
             document.getDocumentElement().replaceChild(convertToNode(object, document.createElement(getElementName())), element);
 
-            return saveDocument(document);
+            saveDocument(document);
+            objects = null;
+
+            return true;
         }
 
         return false;
     }
 
     protected boolean deleteObjectByID(long id) {
+        List<T> list = getAllObjects();
+
+        T objToDelete = null;
+
+        for (T obj : list) {
+            if (obj.getId() == id) {
+                objToDelete = obj;
+            }
+        }
+
+        if (objToDelete == null) {
+            return false;
+        }
+
         Document document = getDocument();
         if (document == null) {
             return false;
@@ -152,7 +232,9 @@ abstract class XmlService<T extends Identifier> {
         if (element != null) {
             document.getDocumentElement().removeChild(element);
 
-            return saveDocument(document);
+            saveDocument(document);
+            objects = null;
+            return true;
         }
 
         return false;
@@ -160,11 +242,30 @@ abstract class XmlService<T extends Identifier> {
 
     private synchronized Document getDocument() {
         try {
-            return documentBuilder.parse(file);
+            if (validateWithXsd()) {
+                return documentBuilder.parse(file);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    private boolean validateWithXsd() {
+        try {
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            URL url = getClass().getResource("/xsd/" + rootTag + ".xsd");
+            Schema schema = factory.newSchema(new File(url.getFile()));
+            Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(file));
+        } catch (Exception ex) {
+            LOGGER.error("xsd validation error", ex);
+            return false;
+        }
+
+        LOGGER.debug("xml file is valid: {}", file);
+
+        return true;
     }
 
     private synchronized boolean saveDocument(Document document) {

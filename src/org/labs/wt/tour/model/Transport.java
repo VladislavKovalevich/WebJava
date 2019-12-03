@@ -1,22 +1,48 @@
+
 package org.labs.wt.tour.model;
 
-import org.labs.wt.tour.model.KindOfTransport;
 
-public class Transport {
+public class Transport extends Identifier {
 
-    private KindOfTransport kindOfTransport;
-    private String placeFrom;
+    private Tour tour;
+    private TransportType type;
+    private Country from;
+    private Country to;
 
-    public KindOfTransport getKindOfTransport() {
-        return kindOfTransport;
+
+    public Transport() {
     }
 
-    public String getPlaceFrom() {
-        return placeFrom;
+    public Tour getTour() {
+        return tour;
     }
 
-    public Transport(KindOfTransport kindOfTransport, String placeFrom){
-        this.kindOfTransport = kindOfTransport;
-        this.placeFrom = placeFrom;
+    public void setTour(Tour tour) {
+        this.tour = tour;
     }
+
+    public TransportType getType() {
+        return type;
+    }
+
+    public void setType(TransportType type) {
+        this.type = type;
+    }
+
+    public Country getFrom() {
+        return from;
+    }
+
+    public void setFrom(Country from) {
+        this.from = from;
+    }
+
+    public Country getTo() {
+        return to;
+    }
+
+    public void setTo(Country to) {
+        this.to = to;
+    }
+
 }

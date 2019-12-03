@@ -1,0 +1,19 @@
+<?xml version = "1.0"?>
+
+<xs:schema xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+   <xs:element name = 'clients'>
+      <xs:complexType>
+         <xs:sequence>
+             <xs:element name = 'client' type = 'ClientType' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name = "ClientType">
+      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'name' type = 'xs:string'/>
+      <xs:attribute name = 'sirname' type = 'xs:string'/>
+      <xs:attribute name = 'address' type = 'xs:string'/>
+      <xs:attribute name = 'phone' type = 'xs:string'/>
+   </xs:complexType>			 
+</xs:schema>

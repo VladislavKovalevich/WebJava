@@ -4,8 +4,16 @@ package org.labs.wt.tour.control;
 
 public interface TourServicesFactory {
 
-    public CountryService getCountryService();
+    CountryService getCountryService();
 
-    public RegionService getRegionService();
+    RegionService getRegionService();
+
+    ClientService getClientService();
+
+    HotelService getHotelService();
+
+    TransportService getTransportService();
+
+    TourService getTourService();
 
 }
