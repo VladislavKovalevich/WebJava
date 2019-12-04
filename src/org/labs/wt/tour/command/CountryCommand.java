@@ -50,6 +50,10 @@ public class CountryCommand extends AbstractCommand {
                 filterCountries(params);
                 break;
 
+            case "convert":
+                convertCountry(params);
+                break;
+
             default:
                 System.out.println("unknown country command");
                 return false;
@@ -133,6 +137,23 @@ public class CountryCommand extends AbstractCommand {
 
     private CountryService getCountryService() {
         return getTourServicesFactory().getCountryService();
+    }
+
+    private void convertCountry(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Country> countries = getCountryService().getCountries();
+
+        setServiceType(params[3]);
+        for (Country country : countries) {
+            getCountryService().addCountry(country);
+        }
+
+        System.out.println("country converted from " + params[2] + " to " + params[3] +
+                "; objects: " + countries.size());
     }
 
 }

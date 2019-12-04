@@ -10,7 +10,7 @@
    </xs:element>
 
    <xs:complexType name = "RegionType">
-      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'id' type = 'xs:ID'/>
       <xs:attribute name = 'name' type = 'xs:string'/>
       <xs:attribute name = 'countryID' type = 'xs:integer'/>
    </xs:complexType>			 

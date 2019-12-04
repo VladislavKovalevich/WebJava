@@ -10,7 +10,7 @@
    </xs:element>
 
    <xs:complexType name = "TourType">
-      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'id' type = 'xs:ID'/>
       <xs:attribute name = 'clientID' type = 'xs:integer'/>
       <xs:attribute name = 'hotelID' type = 'xs:integer'/>
       <xs:attribute name = 'fromDate' type = 'xs:string'/>

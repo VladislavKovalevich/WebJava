@@ -291,7 +291,7 @@ abstract class XmlService<T extends Identifier> {
 
     private Element getElementByID(final Document document, final long id) {
         try {
-            XPathExpression expr = xPath.compile("//*[@id = '" + id + "']");
+            XPathExpression expr = xPath.compile("//*[@id = 'id" + id + "']");
             return (Element) expr.evaluate(document, XPathConstants.NODE);
         } catch (Exception ex) {
             ex.printStackTrace();

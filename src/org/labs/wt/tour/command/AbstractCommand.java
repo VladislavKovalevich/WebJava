@@ -29,25 +29,31 @@ abstract class AbstractCommand {
                 return true;
 
             case "type":
-                setServiceType(params);
-                return true;
+                if (params.length > 2) {
+                    setServiceType(params[2]);
+                    return true;
+                } else {
+                    return false;
+                }
         }
 
         return false;
     }
 
-    protected void setServiceType(String[] params) {
-        if (params.length > 2) {
-            if (params[2].equals("file")) {
-                serviceType = ServiceType.FILE_TYPE;
-            } else if (params[2].equals("xml")) {
-                serviceType = ServiceType.XML_TYPE;
-            } else if (params[2].equals("db")) {
-                serviceType = ServiceType.DB_TYPE;
-            } else {
-                System.out.println("unknown service type");
-            }
+    protected void setServiceType(String type) {
+        if (type.equals("file")) {
+            serviceType = ServiceType.FILE_TYPE;
+        } else if (type.equals("xml")) {
+            serviceType = ServiceType.XML_TYPE;
+        } else if (type.equals("db")) {
+            serviceType = ServiceType.DB_TYPE;
+        } else {
+            System.out.println("unknown service type");
         }
+    }
+
+    protected ServiceType getServiceType() {
+        return serviceType;
     }
 
     protected void printHelp() {

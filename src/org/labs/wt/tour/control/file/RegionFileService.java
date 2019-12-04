@@ -45,21 +45,21 @@ public class RegionFileService extends FileService<Region> implements RegionServ
     public List<Region> filterRegions(Region filter) {
         return filterObjects(
                 (FilterListener<Region>) region -> {
-                    boolean res1 = false;
+                    boolean res1 = true;
                     if ((region.getRegionName() != null) &&
                             (filter.getRegionName() != null) &&
-                            (region.getRegionName().contains(filter.getRegionName()))) {
-                        res1 = true;
+                            (!region.getRegionName().contains(filter.getRegionName()))) {
+                        res1 = false;
                     }
 
-                    boolean res2 = false;
+                    boolean res2 = true;
                     if ((region.getCountry() != null) &&
                             (filter.getCountry() != null) &&
-                            (region.getCountry().getId() == filter.getCountry().getId())) {
-                        res2 = true;
+                            (region.getCountry().getId() != filter.getCountry().getId())) {
+                        res2 = false;
                     }
 
-                    return res1 | res2;
+                    return res1 & res2;
                 });
     }
 

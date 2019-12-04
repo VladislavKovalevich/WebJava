@@ -57,7 +57,7 @@ public class TransportXmlService extends XmlService<Transport> implements Transp
         transport.setFrom(new Country());
         transport.setTo(new Country());
 
-        transport.setId(Long.parseLong(element.getAttribute("id")));
+        transport.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         transport.getTour().setId(Long.parseLong(element.getAttribute("tourID")));
         transport.setType(TransportType.valueOf(element.getAttribute("type")));
         transport.getFrom().setId(Long.parseLong(element.getAttribute("fromID")));
@@ -72,7 +72,7 @@ public class TransportXmlService extends XmlService<Transport> implements Transp
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("tourID", Long.toString(object.getTour().getId()));
         element.setAttribute("type", object.getType().name());
         element.setAttribute("fromID", Long.toString(object.getFrom().getId()));

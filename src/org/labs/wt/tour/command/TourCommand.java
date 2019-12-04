@@ -7,11 +7,13 @@ import org.labs.wt.tour.model.Client;
 import org.labs.wt.tour.model.Hotel;
 import org.labs.wt.tour.model.Tour;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
 public class TourCommand extends AbstractCommand {
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 
     public TourCommand() {
@@ -48,6 +50,10 @@ public class TourCommand extends AbstractCommand {
 
             case "getbyid":
                 getByIdTour(params);
+                break;
+
+            case "convert":
+                convertTour(params);
                 break;
 
             default:
@@ -112,10 +118,18 @@ public class TourCommand extends AbstractCommand {
             tour.getHotel().setId(Long.parseLong(params[4]));
         }
         if (params.length > 5) {
-            tour.setFrom(Date.valueOf(params[5]));
+            try {
+                tour.setFrom(dateFormat.parse(params[5]));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         if (params.length > 6) {
-            tour.setTo(Date.valueOf(params[6]));
+            try {
+                tour.setTo(dateFormat.parse(params[6]));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         if (params.length > 7) {
             tour.setPersonCount(Integer.parseInt(params[7]));
@@ -138,6 +152,23 @@ public class TourCommand extends AbstractCommand {
 
     private TourService getTourService() {
         return getTourServicesFactory().getTourService();
+    }
+
+    private void convertTour(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Tour> tours = getTourService().getTours();
+
+        setServiceType(params[3]);
+        for (Tour tour : tours) {
+            getTourService().addTour(tour);
+        }
+
+        System.out.println("tour converted from " + params[2] + " to " + params[3] +
+                "; objects: " + tours.size());
     }
 
 }
