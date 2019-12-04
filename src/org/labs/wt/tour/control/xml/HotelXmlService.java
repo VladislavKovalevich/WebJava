@@ -50,7 +50,7 @@ public class HotelXmlService extends XmlService<Hotel> implements HotelService {
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("name", object.getHotelName());
         element.setAttribute("regionID", Long.toString(object.getRegion() != null ? object.getRegion().getId() : -1));
         element.setAttribute("rank", object.getRank().name());
@@ -67,7 +67,7 @@ public class HotelXmlService extends XmlService<Hotel> implements HotelService {
 
         Element element = (Element)node;
         Hotel hotel = new Hotel();
-        hotel.setId(Long.parseLong(element.getAttribute("id")));
+        hotel.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         hotel.setHotelName(element.getAttribute("name"));
 
         Region region = new Region();

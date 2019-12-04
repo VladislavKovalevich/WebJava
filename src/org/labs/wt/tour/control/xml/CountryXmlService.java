@@ -48,6 +48,7 @@ public class CountryXmlService extends XmlService<Country> implements CountrySer
                 (FilterListener<Country>) country -> {
                     if ((country.getCountryName() != null) &&
                             (filterCountry.getCountryName() != null) &&
+                            (!filterCountry.getCountryName().isEmpty()) &&
                             (country.getCountryName().contains(filterCountry.getCountryName()))) {
                         return true;
                     }
@@ -68,7 +69,7 @@ public class CountryXmlService extends XmlService<Country> implements CountrySer
 
         Element element = (Element)node;
         Country country = new Country();
-        country.setId(Long.parseLong(element.getAttribute("id")));
+        country.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         country.setCountryName(element.getAttribute("name"));
 
         return country;
@@ -80,7 +81,7 @@ public class CountryXmlService extends XmlService<Country> implements CountrySer
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("name", object.getCountryName());
 
         return element;

@@ -7,11 +7,13 @@ import org.labs.wt.tour.model.Client;
 import org.labs.wt.tour.model.Hotel;
 import org.labs.wt.tour.model.Tour;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
 public class TourFileService extends FileService<Tour> implements TourService {
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public TourFileService(String file) {
         super(file);
@@ -54,8 +56,12 @@ public class TourFileService extends FileService<Tour> implements TourService {
             tour.setId(Long.parseLong(parts[0]));
             tour.getClient().setId(Long.parseLong(parts[1]));
             tour.getHotel().setId(Long.parseLong(parts[2]));
-            tour.setFrom(Date.valueOf(parts[3]));
-            tour.setTo(Date.valueOf(parts[4]));
+            try {
+                tour.setFrom(dateFormat.parse(parts[3]));
+                tour.setTo(dateFormat.parse(parts[4]));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             tour.setPersonCount(Integer.valueOf(parts[5]));
 
             return tour;
@@ -70,8 +76,8 @@ public class TourFileService extends FileService<Tour> implements TourService {
                 append(object.getId()).append("|").
                 append(object.getClient().getId()).append("|").
                 append(object.getHotel().getId()).append("|").
-                append(object.getFrom().toString()).append("|").
-                append(object.getTo().toString()).append("|").
+                append(dateFormat.format(object.getFrom())).append("|").
+                append(dateFormat.format(object.getTo())).append("|").
                 append(object.getPersonCount().intValue());
 
         return buffer.toString();

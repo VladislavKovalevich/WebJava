@@ -50,6 +50,10 @@ public class HotelCommand extends AbstractCommand {
                 getByIdHotel(params);
                 break;
 
+            case "convert":
+                convertHotel(params);
+                break;
+
             default:
                 System.out.println("unknown hotel command");
                 return false;
@@ -133,6 +137,23 @@ public class HotelCommand extends AbstractCommand {
 
     private HotelService getHotelService() {
         return getTourServicesFactory().getHotelService();
+    }
+
+    private void convertHotel(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Hotel> hotels = getHotelService().getHotels();
+
+        setServiceType(params[3]);
+        for (Hotel hotel : hotels) {
+            getHotelService().addHotel(hotel);
+        }
+
+        System.out.println("hotel converted from " + params[2] + " to " + params[3] +
+                "; objects: " + hotels.size());
     }
 
 }

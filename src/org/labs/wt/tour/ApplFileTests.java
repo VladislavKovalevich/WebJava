@@ -8,6 +8,8 @@ import org.labs.wt.tour.control.TourServices;
 import org.labs.wt.tour.model.Country;
 import org.labs.wt.tour.model.Region;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 

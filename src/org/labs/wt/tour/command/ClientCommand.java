@@ -47,6 +47,10 @@ public class ClientCommand extends AbstractCommand {
                 getByIdClient(params);
                 break;
 
+            case "convert":
+                convertClient(params);
+                break;
+
             default:
                 System.out.println("unknown client command");
                 return false;
@@ -129,6 +133,23 @@ public class ClientCommand extends AbstractCommand {
 
     private ClientService getClientService() {
         return getTourServicesFactory().getClientService();
+    }
+
+    private void convertClient(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Client> clients = getClientService().getClients();
+
+        setServiceType(params[3]);
+        for (Client client : clients) {
+            getClientService().addClient(client);
+        }
+
+        System.out.println("client converted from " + params[2] + " to " + params[3] +
+                "; objects: " + clients.size());
     }
 
 }

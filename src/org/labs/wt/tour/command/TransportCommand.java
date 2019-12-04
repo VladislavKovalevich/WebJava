@@ -3,7 +3,6 @@ package org.labs.wt.tour.command;
 
 
 import org.labs.wt.tour.control.TransportService;
-import org.labs.wt.tour.control.TourServices;
 import org.labs.wt.tour.model.Country;
 import org.labs.wt.tour.model.Tour;
 import org.labs.wt.tour.model.Transport;
@@ -135,6 +134,23 @@ public class TransportCommand extends AbstractCommand {
 
     private TransportService getTransportService() {
         return getTourServicesFactory().getTransportService();
+    }
+
+    private void convertTransport(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Transport> transports = getTransportService().getTransports();
+
+        setServiceType(params[3]);
+        for (Transport transport : transports) {
+            getTransportService().addTransport(transport);
+        }
+
+        System.out.println("transport converted from " + params[2] + " to " + params[3] +
+                "; objects: " + transports.size());
     }
 
 }

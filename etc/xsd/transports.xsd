@@ -9,10 +9,18 @@
       </xs:complexType>
    </xs:element>
 
+   <xs:simpleType name="transportType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="BUS" />
+         <xs:enumeration value="AIR" />
+         <xs:enumeration value="TRAIN" />
+      </xs:restriction>
+   </xs:simpleType>
+
    <xs:complexType name = "TransportType">
-      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'id' type = 'xs:ID'/>
       <xs:attribute name = 'tourID' type = 'xs:integer'/>
-      <xs:attribute name = 'type' type = 'xs:string'/>
+      <xs:attribute name = 'type' type = 'transportType'/>
       <xs:attribute name = 'fromID' type = 'xs:integer'/>
       <xs:attribute name = 'toID' type = 'xs:integer'/>
    </xs:complexType>			 

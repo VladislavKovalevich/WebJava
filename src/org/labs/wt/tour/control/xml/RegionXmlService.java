@@ -52,21 +52,22 @@ public class RegionXmlService extends XmlService<Region> implements RegionServic
     public List<Region> filterRegions(Region filter) {
         return filterObjects(
                 (FilterListener<Region>) region -> {
-                    boolean res1 = false;
+                    boolean res1 = true;
                     if ((region.getRegionName() != null) &&
                             (filter.getRegionName() != null) &&
-                            (region.getRegionName().contains(filter.getRegionName()))) {
-                        res1 = true;
+                            (!filter.getRegionName().isEmpty()) &&
+                            (!region.getRegionName().contains(filter.getRegionName()))) {
+                        res1 = false;
                     }
 
-                    boolean res2 = false;
+                    boolean res2 = true;
                     if ((region.getCountry() != null) &&
                             (filter.getCountry() != null) &&
-                            (region.getCountry().getId() == filter.getCountry().getId())) {
-                        res2 = true;
+                            (region.getCountry().getId() != filter.getCountry().getId())) {
+                        res2 = false;
                     }
 
-                    return res1 | res2;
+                    return res1 & res2;
                 });
     }
 
@@ -76,7 +77,7 @@ public class RegionXmlService extends XmlService<Region> implements RegionServic
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("name", object.getRegionName());
         element.setAttribute("countryID", Long.toString(object.getCountry() != null ? object.getCountry().getId() : -1));
 
@@ -91,7 +92,7 @@ public class RegionXmlService extends XmlService<Region> implements RegionServic
 
         Element element = (Element)node;
         Region region = new Region();
-        region.setId(Long.parseLong(element.getAttribute("id")));
+        region.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         region.setRegionName(element.getAttribute("name"));
 
         region.setCountry(new Country());

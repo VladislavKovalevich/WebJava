@@ -5,6 +5,11 @@ package org.labs.wt.tour.control.db;
 import org.labs.wt.tour.control.FilterListener;
 import org.labs.wt.tour.model.Identifier;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,28 +22,132 @@ abstract class DBService<T extends Identifier> {
         this.tableName = tableName;
     }
 
-    protected List<T> getAllObjects() {
-        return null;
+
+    protected List<T> getAllObjects(ResultSetListener<T> listener) {
+        String sql = "select * from " + tableName;
+
+        List<T> objects = new ArrayList<>();
+
+        try {
+            Connection connection = DBSource.getInstance().getConnection();
+
+            ResultSet resultSet = connection.createStatement().executeQuery(sql);
+            while (resultSet.next()) {
+                objects.add(listener.onResultSet(resultSet));
+            }
+
+            resultSet.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return objects;
     }
 
     protected List<T> filterObjects(FilterListener filter) {
+        return new ArrayList<>();
+    }
+
+    protected T getObjectByID(long id, String idName, ResultSetListener<T> listener) {
+        String sql = "select * from " + tableName + " where " + idName + " = ?";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            Connection connection = DBSource.getInstance().getConnection();
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return listener.onResultSet(resultSet);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
         return null;
     }
 
-    protected T getObjectByID(long id) {
-        return null;
+    protected boolean addObject(String sql, PreparedStatementListener listener) {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = DBSource.getInstance().getConnection();
+
+            connection.setAutoCommit(true);
+            preparedStatement = connection.prepareStatement(sql);
+            listener.onPreparedStatement(preparedStatement);
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
-    protected boolean addObject(T object) {
-        return true;
+    protected boolean updateObject(String sql, PreparedStatementListener listener) {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = DBSource.getInstance().getConnection();
+
+            connection.setAutoCommit(true);
+            preparedStatement = connection.prepareStatement(sql);
+            listener.onPreparedStatement(preparedStatement);
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
-    protected boolean updateObject(T object) {
-        return true;
-    }
+    protected boolean deleteObjectByID(long id, String idName) {
+        try {
+            String sql = "delete from " + tableName + " where " + idName + " = " + id;
 
-    protected boolean deleteObjectByID(long id) {
-        return true;
+            Connection connection = DBSource.getInstance().getConnection();
+            connection.setAutoCommit(true);
+            connection.createStatement().executeUpdate(sql);
+
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
     }
 
 }

@@ -49,7 +49,7 @@ public class ClientXmlService extends XmlService<Client> implements ClientServic
 
         Element element = (Element)node;
         Client client = new Client();
-        client.setId(Long.parseLong(element.getAttribute("id")));
+        client.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         client.setName(element.getAttribute("name"));
         client.setSirname(element.getAttribute("sirname"));
         client.setAddress(element.getAttribute("address"));
@@ -64,7 +64,7 @@ public class ClientXmlService extends XmlService<Client> implements ClientServic
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("name", object.getName());
         element.setAttribute("sirname", object.getSirname());
         element.setAttribute("address", object.getAddress());

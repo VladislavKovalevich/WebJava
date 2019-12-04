@@ -52,6 +52,10 @@ public class RegionCommand extends AbstractCommand {
                 filterRegions(params);
                 break;
 
+            case "convert":
+                convertRegion(params);
+                break;
+
             default:
                 System.out.println("unknown region command");
                 return false;
@@ -79,9 +83,9 @@ public class RegionCommand extends AbstractCommand {
         if (params.length > 2) {
             boolean result = getRegionService().deleteRegion(Long.parseLong(params[2]));
             if (result) {
-                System.out.println("country deleted");
+                System.out.println("region deleted");
             } else {
-                System.out.println("country not found");
+                System.out.println("region not found");
             }
         }
     }
@@ -144,6 +148,23 @@ public class RegionCommand extends AbstractCommand {
 
     private RegionService getRegionService() {
         return getTourServicesFactory().getRegionService();
+    }
+
+    private void convertRegion(String[] params) {
+        if (params.length < 4) {
+            return;
+        }
+
+        setServiceType(params[2]);
+        List<Region> regions = getRegionService().getRegions();
+
+        setServiceType(params[3]);
+        for (Region region : regions) {
+            getRegionService().addRegion(region);
+        }
+
+        System.out.println("region converted from " + params[2] + " to " + params[3] +
+                "; objects: " + regions.size());
     }
 
 }

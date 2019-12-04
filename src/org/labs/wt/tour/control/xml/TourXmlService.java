@@ -9,11 +9,13 @@ import org.labs.wt.tour.model.Tour;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
 public class TourXmlService extends XmlService<Tour> implements TourService {
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public TourXmlService(String file) {
         super("tours", file);
@@ -56,11 +58,15 @@ public class TourXmlService extends XmlService<Tour> implements TourService {
         tour.setClient(new Client());
         tour.setHotel(new Hotel());
 
-        tour.setId(Long.parseLong(element.getAttribute("id")));
+        tour.setId(Long.parseLong(element.getAttribute("id").substring(2)));
         tour.getClient().setId(Long.parseLong(element.getAttribute("clientID")));
         tour.getHotel().setId(Long.parseLong(element.getAttribute("hotelID")));
-        tour.setFrom(Date.valueOf(element.getAttribute("fromDate")));
-        tour.setTo(Date.valueOf(element.getAttribute("toDate")));
+        try {
+            tour.setFrom(dateFormat.parse(element.getAttribute("fromDate")));
+            tour.setTo(dateFormat.parse(element.getAttribute("toDate")));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         tour.setPersonCount(Integer.parseInt(element.getAttribute("persons")));
 
         return tour;
@@ -72,11 +78,11 @@ public class TourXmlService extends XmlService<Tour> implements TourService {
             return element;
         }
 
-        element.setAttribute("id", Long.toString(object.getId()));
+        element.setAttribute("id", "id" + object.getId());
         element.setAttribute("clientID", Long.toString(object.getClient().getId()));
         element.setAttribute("hotelID", Long.toString(object.getHotel().getId()));
-        element.setAttribute("fromDate", object.getFrom().toString());
-        element.setAttribute("toDate", object.getTo().toString());
+        element.setAttribute("fromDate", dateFormat.format(object.getFrom()));
+        element.setAttribute("toDate", dateFormat.format(object.getTo()));
         element.setAttribute("persons", object.getPersonCount().toString());
 
         return element;

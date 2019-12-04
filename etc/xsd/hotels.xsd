@@ -9,11 +9,31 @@
       </xs:complexType>
    </xs:element>
 
+   <xs:simpleType name="rankType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="RANK1" />
+         <xs:enumeration value="RANK2" />
+         <xs:enumeration value="RANK3" />
+         <xs:enumeration value="RANK4" />
+         <xs:enumeration value="RANK5" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="foodType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="RO" />
+         <xs:enumeration value="BB" />
+         <xs:enumeration value="HB" />
+         <xs:enumeration value="FB" />
+         <xs:enumeration value="AI" />
+      </xs:restriction>
+   </xs:simpleType>
+
    <xs:complexType name = "HotelType">
-      <xs:attribute name = 'id' type = 'xs:integer'/>
+      <xs:attribute name = 'id' type = 'xs:ID'/>
       <xs:attribute name = 'name' type = 'xs:string'/>
       <xs:attribute name = 'regionID' type = 'xs:integer'/>
-      <xs:attribute name = 'rank' type = 'xs:string'/>
-      <xs:attribute name = 'food' type = 'xs:string'/>
+      <xs:attribute name = 'rank' type = 'rankType'/>
+      <xs:attribute name = 'food' type = 'foodType'/>
    </xs:complexType>			 
 </xs:schema>
