@@ -63,7 +63,7 @@ public class ClientDBService extends DBService<Client> implements ClientService 
 
     @Override
     public boolean updateClient(Client client) {
-        String sql = "update client set client_name = ?, client_sirname = ?, address = ?, phone = ? where client = ?";
+        String sql = "update client set client_name = ?, client_sirname = ?, address = ?, phone = ? where client_id = ?";
         return updateObject(sql, preparedStatement -> {
             try {
                 preparedStatement.setString(1, client.getName());

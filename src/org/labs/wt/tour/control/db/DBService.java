@@ -28,8 +28,9 @@ abstract class DBService<T extends Identifier> {
 
         List<T> objects = new ArrayList<>();
 
+        Connection connection = null;
         try {
-            Connection connection = DBSource.getInstance().getConnection();
+            connection = DBSource.getInstance().getConnection();
 
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             while (resultSet.next()) {
@@ -39,6 +40,14 @@ abstract class DBService<T extends Identifier> {
             resultSet.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         return objects;
@@ -51,10 +60,11 @@ abstract class DBService<T extends Identifier> {
     protected T getObjectByID(long id, String idName, ResultSetListener<T> listener) {
         String sql = "select * from " + tableName + " where " + idName + " = ?";
 
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            Connection connection = DBSource.getInstance().getConnection();
+            connection = DBSource.getInstance().getConnection();
 
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
@@ -72,6 +82,9 @@ abstract class DBService<T extends Identifier> {
                 if (preparedStatement != null) {
                     preparedStatement.close();
                 }
+                if (connection != null) {
+                    connection.close();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -83,8 +96,9 @@ abstract class DBService<T extends Identifier> {
     protected boolean addObject(String sql, PreparedStatementListener listener) {
         PreparedStatement preparedStatement = null;
 
+        Connection connection = null;
         try {
-            Connection connection = DBSource.getInstance().getConnection();
+            connection = DBSource.getInstance().getConnection();
 
             connection.setAutoCommit(true);
             preparedStatement = connection.prepareStatement(sql);
@@ -99,6 +113,9 @@ abstract class DBService<T extends Identifier> {
                 if (preparedStatement != null) {
                     preparedStatement.close();
                 }
+                if (connection != null) {
+                    connection.close();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -110,8 +127,9 @@ abstract class DBService<T extends Identifier> {
     protected boolean updateObject(String sql, PreparedStatementListener listener) {
         PreparedStatement preparedStatement = null;
 
+        Connection connection = null;
         try {
-            Connection connection = DBSource.getInstance().getConnection();
+            connection = DBSource.getInstance().getConnection();
 
             connection.setAutoCommit(true);
             preparedStatement = connection.prepareStatement(sql);
@@ -125,6 +143,9 @@ abstract class DBService<T extends Identifier> {
             try {
                 if (preparedStatement != null) {
                     preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -141,6 +162,7 @@ abstract class DBService<T extends Identifier> {
             Connection connection = DBSource.getInstance().getConnection();
             connection.setAutoCommit(true);
             connection.createStatement().executeUpdate(sql);
+            connection.close();
 
             return true;
         } catch (Exception ex) {

@@ -26,7 +26,7 @@ public class TourServicesXmlFactory implements TourServicesFactory {
     }
 
     private TourServicesXmlFactory(final String dir) {
-        this.dir = "data" + File.separator + dir;
+        this.dir = "./data" + File.separator + dir;
     }
 
     @Override
